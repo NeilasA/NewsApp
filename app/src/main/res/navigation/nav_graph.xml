@@ -13,16 +13,35 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/SecondFragment" />
+            app:destination="@id/NewsArticleFragment" />
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
+        android:id="@+id/NewsArticleFragment"
         android:name="com.example.newsapp.article.NewsArticleFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_news_article">
+        <argument
+            android:name="Article"
+            app:argType="com.example.usecase.data.Article"
+            />
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
             app:destination="@id/FirstFragment" />
+        <action
+            android:id="@+id/action_NewsArticleFragment_to_webViewFragment"
+            app:destination="@id/webViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/webViewFragment"
+        android:name="com.example.newsapp.webview.WebViewFragment"
+        android:label="@string/webViewFragmentLabel"
+        tools:layout="@layout/fragment_web_view" >
+        <argument
+            android:name="NewsUrl"
+            app:argType="string"/>
+        <action
+            android:id="@+id/action_webViewFragment_to_NewsArticleFragment"
+            app:destination="@id/NewsArticleFragment" />
     </fragment>
 </navigation>
