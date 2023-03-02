@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.newsapp.databinding.FragmentNewsBinding
 import com.example.usecase.data.Article
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -39,8 +42,14 @@ class NewsFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 val news = viewModel.news.observeAsState()
+                val loading = viewModel.loading.collectAsState()
                 MaterialTheme {
-                    news.value?.let { SetupComposeUi(it) }
+                    SwipeRefresh(
+                        state = rememberSwipeRefreshState(isRefreshing = loading.value),
+                        onRefresh = { viewModel.loadNews() }
+                    ) {
+                        news.value?.let { SetupComposeUi(it) }
+                    }
                 }
             }
         }
@@ -49,10 +58,12 @@ class NewsFragment : Fragment() {
 
     @Composable
     private fun SetupComposeUi(news: List<Article>) {
-        Column(modifier = Modifier
-            .background(color = Color.LightGray)
-            .padding(top = 4.dp, start = 4.dp, end = 4.dp)
-            .fillMaxWidth()) {
+        Column(
+            modifier = Modifier
+                .background(color = Color.LightGray)
+                .padding(top = 4.dp, start = 4.dp, end = 4.dp)
+                .fillMaxWidth()
+        ) {
             LazyColumn {
                 items(news) { article ->
                     println("values news: $news")
